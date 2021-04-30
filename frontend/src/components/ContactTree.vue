@@ -91,16 +91,19 @@ export default {
       .data(data.links)
       .enter()
       .append("line")
-      .style("stroke", "#aaa");
+      .style("stroke", "#ff0000");
 
     // Initialize the nodes
-    var node = svg
-      .selectAll("circle")
-      .data(data.nodes)
-      .enter()
+    var node = svg.selectAll("g").data(data.nodes).enter();
+
+    const circleText = node.append("g");
+
+    const circles = circleText
       .append("circle")
-      .attr("r", 20)
+      .attr("r", 50)
       .style("fill", "#69b3a2");
+
+    circleText.append("text").text((d) => d.id);
 
     var simulation = d3
       .forceSimulation(data.nodes) // Force algorithm is applied to data.nodes
@@ -114,12 +117,12 @@ export default {
           .links(data.links)
           .distance((d) => {
             console.log("d", d.index);
-            return d.index;
+            return d.index * 5;
           })
       )
       .force(
         "collision",
-        d3.forceCollide().radius(() => 20)
+        d3.forceCollide().radius(() => 50)
       )
       .force("charge", d3.forceManyBody().strength(200)) // This adds repulsion between nodes. Play with the -400 for the repulsion strength
       .force("center", d3.forceCenter(1000 / 2, 1000 / 2)) // This force attracts nodes to the center of the svg area
@@ -141,13 +144,10 @@ export default {
           return d.target.y;
         });
 
-      node
-        .attr("cx", function (d) {
-          return d.x + 6;
-        })
-        .attr("cy", function (d) {
-          return d.y - 6;
-        });
+      circleText.attr("transform", (d) => {
+        console.log(d);
+        return "translate(" + d.x + "," + d.y + ")";
+      });
     }
   },
 };
