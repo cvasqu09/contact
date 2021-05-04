@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import * as d3 from "d3";
+import randomColor from "randomcolor";
 export default {
   name: "ContactTree",
   mounted() {
@@ -101,7 +102,11 @@ export default {
     const circles = circleText
       .append("circle")
       .attr("r", 50)
-      .style("fill", "#69b3a2");
+      .attr("fill", () =>
+        randomColor({
+          luminosity: "dark",
+        })
+      );
 
     circleText.append("text").text((d) => d.id);
 
@@ -116,7 +121,6 @@ export default {
           }) // This provide  the id of a node
           .links(data.links)
           .distance((d) => {
-            console.log("d", d.index);
             return d.index * 5;
           })
       )
@@ -145,7 +149,6 @@ export default {
         });
 
       circleText.attr("transform", (d) => {
-        console.log(d);
         return "translate(" + d.x + "," + d.y + ")";
       });
     }
